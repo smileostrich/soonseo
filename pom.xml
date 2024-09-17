@@ -8,7 +8,34 @@
     <version>0.1.0</version>
 
     <name>soonseo</name>
+    <url>https://github.com/smileostrich/soonseo</url>
     <description>Extremely fast task queuing library for Java with virtual thread support</description>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>smileostrich</id>
+            <name>Ilmin Moon</name>
+            <email>ian.ilminmoon@gmail.com</email>
+            <roles>
+                <role>SoonSeo Owner</role>
+            </roles>
+            <timezone>+9</timezone>
+        </developer>
+    </developers>
+
+    <inceptionYear>2024</inceptionYear>
+    <scm>
+        <connection>scm:git:git://github.com/smileostrich/soonseo.git</connection>
+        <developerConnection>scm:git:ssh://github.com:smileostrich/soonseo.git</developerConnection>
+        <url>https://github.com/smileostrich/soonseo</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
