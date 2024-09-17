@@ -43,18 +43,16 @@ TaskQueueConfig config = new TaskQueueConfig.Builder()
         .setMaxRetries(3)
         .setTaskTimeout(Duration.ofSeconds(5))
         .setEnableLogging(false)
-        .setBufferSize(1024)
+        .setBufferSize(2048)
         .setErrorHandler(e -> System.err.println("Error occurred: " + e.getMessage())) // Custom error handler
         .build();
 
 TaskQueue taskQueue = new AsyncTaskQueue(config);
 
-// Submitting a simple task
 taskQueue.submit(() -> {
-// Task logic
+    // Task logic
 });
 
-// Shutting down the task queue
 taskQueue.shutdown();
 ```
 
@@ -68,9 +66,7 @@ CompletableFuture<String> future = taskQueue.submit(() -> {
 });
 
 try {
-    // Wait for the result
     String result = future.get();
-    System.out.println("Result: " + result);
 } catch (InterruptedException | ExecutionException e) {
 }
 ```
@@ -85,7 +81,7 @@ TaskQueueConfig config = new TaskQueueConfig.Builder()
 
 CompletableFuture<Void> future = taskQueue.submit(() -> {
     Thread.sleep(5000);
-    System.out.println("This line will not be reached due to the timeout.");
+    // This line will not be reached due to the timeout.
 });
 
 try {
@@ -105,7 +101,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 2. Create a new feature branch (git checkout -b feature-branch)
 3. Commit your changes (git commit -am 'Add new feature')
 4. Push to the branch (git push origin feature-branch)
-4. Open a Pull Request
+5. Open a Pull Request
 
 ## License
 

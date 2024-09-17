@@ -1,4 +1,4 @@
-package org.ian.soonseo.queue;
+package org.ian.soonseo;
 
 import com.lmax.disruptor.EventHandler;
 import org.apache.logging.log4j.LogManager;

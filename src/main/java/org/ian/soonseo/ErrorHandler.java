@@ -1,4 +1,4 @@
-package org.ian.soonseo.queue;
+package org.ian.soonseo;
 
 @FunctionalInterface
 public interface ErrorHandler {
