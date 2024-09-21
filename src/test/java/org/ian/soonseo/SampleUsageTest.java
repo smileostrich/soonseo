@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,7 +84,7 @@ public class SampleUsageTest {
 
         List<CapturedJobMetrics> jobMetrics = queue.captureJobMetrics();
         assertEquals(1, jobMetrics.size());
-        assertEquals(JobStatus.FAILED, jobMetrics.get(0).status());
+        assertEquals(JobStatus.FAILED, jobMetrics.getFirst().status());
     }
 
     @Test

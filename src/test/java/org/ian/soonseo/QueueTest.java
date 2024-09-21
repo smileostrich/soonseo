@@ -81,7 +81,7 @@ public class QueueTest {
 
         List<CapturedJobMetrics> jobMetrics = smallQueue.captureJobMetrics();
         assertEquals(1, jobMetrics.size());
-        assertEquals("SampleFunction1", jobMetrics.get(0).function());
+        assertEquals("SampleFunction1", jobMetrics.getFirst().function());
     }
 
 
