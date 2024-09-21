@@ -1,59 +1,56 @@
 # soonseo
-**soonseo** is a simple & extremely fast task queuing library for Java that leverages LMAX Disruptor and virtual threads to handle high-performance async tasks with minimal overhead.
+**soonseo** is a high-performance, lightweight task queuing library for Java that uses the LMAX Disruptor and virtual threads (JDK 21+) to provide asynchronous task processing. With low overhead and customizable retry logic, it's ideal for managing high-throughput task workloads with low-latency requirements.
 
 ## Features
-- High throughput: Leverages the LMAX Disruptor for extremely fast and efficient event processing.
-- Virtual threads support: Fully supports JDK 21+ virtual threads, providing lightweight concurrency with minimal resource usage.
-- Configurable: Allows you to customize task queue behavior, including:
-  - Task timeouts
-  - Retry logic with configurable maximum retries
-  - Error handling
-  - Logging
-  - Buffer size for task queuing
-- Flexible task submission: Submit Runnable or Callable tasks for asynchronous execution.
-- Graceful shutdown: Safely shut down the task queue without losing tasks in progress.
- 
+- High throughput: Utilizes the LMAX Disruptor for low-latency, high-efficiency event processing.
+- Virtual threads: Supports lightweight concurrency with virtual threads for scalable task processing.
+- Configurable options:
+  - Buffer size
+  - Retry logic with customizable retry limits and backoff time
+  - Task failure handling using custom exceptions
+  - Worker metrics for monitoring task completion, failures, and retries
+- Graceful shutdown: Ensures safe task queue termination with no loss of in-progress tasks
+
 
 ## Installation
 
-To use soonseo in your project, add the following dependency to your Maven `pom.xml`:
+To use Soonseo in your project, include the following dependency in your pom.xml (for Maven) or build.gradle (for Gradle)
 
 ### For maven
 ```xml
 <dependency>
     <groupId>org.ian.soonseo</groupId>
-    <artifactId>soonseo</artifactId>
-    <version>0.1.0</version>
+    <artifactId>soonseo-core</artifactId>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 ### For Gradle
 ```groovy
-implementation 'org.ian.soonseo:soonseo:0.1.0'
+implementation 'org.ian.soonseo:soonseo-core:0.2.0'
 ```
 
 ## Usage
 
 ### Basic Example
 
-Here’s a basic example of how to configure and use soonseo
+Below is an example demonstrating how to configure and use the **Soonseo** task queue
 
 ```java
-TaskQueueConfig config = new TaskQueueConfig.Builder()
-        .setMaxRetries(3)
-        .setTaskTimeout(Duration.ofSeconds(5))
-        .setEnableLogging(false)
-        .setBufferSize(2048)
-        .setErrorHandler(e -> System.err.println("Error occurred: " + e.getMessage())) // Custom error handler
-        .build();
+Config config = new Config(1024, 2, 3, 100);  // Buffer size, 2 workers, 3 retries, 100ms backoff
+Queue queue = new Queue(config);
 
-TaskQueue taskQueue = new AsyncTaskQueue(config);
-
-taskQueue.submit(() -> {
-    // Task logic
+Job job1 = new Job("Task1", "arg1,arg2", () -> {
+  // Task logic goes here
 });
 
-taskQueue.shutdown();
+queue.submit(job1);
+
+try {
+    queue.shutdown();
+} catch (InterruptedException | TimeoutException e) {
+    logger.error("Queue shutdown interrupted or timed out: ");
+}
 ```
 
 ### Callable Example
@@ -71,25 +68,49 @@ try {
 }
 ```
 
-### Handling Task Timeouts
+### Handling Task Failures
 
-soonseo allows you to set a task timeout to automatically terminate tasks that exceed the specified duration
+In **Soonseo**, if a task throws an exception during execution, it will be marked as FAILED. You can use the job and worker metrics to track job status and retries.
+
 ```java
-TaskQueueConfig config = new TaskQueueConfig.Builder()
-    .setTaskTimeout(Duration.ofSeconds(2))
-    .build();
-
-CompletableFuture<Void> future = taskQueue.submit(() -> {
-    Thread.sleep(5000);
-    // This line will not be reached due to the timeout.
+Job failingJob = new Job("TaskWithFailure", "arg1,arg2", () -> {
+    throw new RuntimeException("Simulating a task failure");
 });
 
 try {
-    future.get();  // This will throw a TimeoutException
-} catch (ExecutionException e) {
+    queue.submit(failingJob);
+} catch (RejectedExecutionException e) {
+}
+
+// Capturing job metrics to check failure status
+List<CapturedJobMetrics> jobMetrics = queue.captureJobMetrics();
+jobMetrics.forEach(metric -> System.out.println("Job " + metric.key() + " status: " + metric.status()));
+```
+
+### Worker Metrics
+
+You can track the performance of workers, including the number of jobs they’ve completed, failed, or retried
+
+```java
+List<CapturedWorkerMetrics> workerMetrics = queue.captureWorkerMetrics();
+for (CapturedWorkerMetrics metrics : workerMetrics) {
+    logger.info("Worker " + metrics.workerId() + " completed jobs: " + metrics.completed());
+    logger.info("Worker " + metrics.workerId() + " failed jobs: " + metrics.failed());
+    logger.info("Worker " + metrics.workerId() + " retried jobs: " + metrics.retried());
 }
 ```
 
+### Handling Task Retries
+
+**Soonseo** allows you to configure retry behavior with an exponential backoff strategy. If a task fails due to insufficient buffer capacity, it will be retried up to the configured maximum retries.
+
+```java
+Job job2 = new Job("TaskWithRetry", "arg3,arg4", () -> {
+    System.out.println("Job 2 executed");
+});
+
+queue.submit(job2);  // Job is retried if the buffer is full or capacity is unavailable
+```
 
 ## Contributing
 
