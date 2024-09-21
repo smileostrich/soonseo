@@ -5,11 +5,11 @@
 
     <groupId>org.ian.soonseo</groupId>
     <artifactId>soonseo-core</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 
     <name>soonseo-core</name>
     <url>https://github.com/smileostrich/soonseo</url>
-    <description>soonseo-core is a simple and extremely fast task queuing library for Java that leverages LMAX Disruptor and virtual threads to handle high-performance async tasks with minimal overhead.</description>
+    <description>soonseo is a high-performance, lightweight task queuing library for Java that uses the LMAX Disruptor and virtual threads (JDK 21+) to provide asynchronous task processing. With low overhead and customizable retry logic, it's ideal for managing high-throughput task workloads with low-latency requirements.</description>
 
     <licenses>
         <license>

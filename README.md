@@ -21,13 +21,13 @@ To use Soonseo in your project, include the following dependency in your pom.xml
 <dependency>
     <groupId>org.ian.soonseo</groupId>
     <artifactId>soonseo-core</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
 ### For Gradle
 ```groovy
-implementation 'org.ian.soonseo:soonseo-core:0.2.0'
+implementation 'org.ian.soonseo:soonseo-core:0.2.1'
 ```
 
 ## Usage
